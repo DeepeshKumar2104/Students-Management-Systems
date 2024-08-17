@@ -1,4 +1,4 @@
-﻿using StudentManagementSystems;
+using StudentManagementSystems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -193,58 +193,68 @@ namespace studentManagementsystems
             }
         }
 
-       
+
 
         // Find the details of the student who is topper of the class.
         public void TopperByClass(List<StudentClass> students)
         {
-            // Edge case
             if (students == null || students.Count == 0)
             {
                 Console.WriteLine("No students are present to evaluate.");
                 return;
             }
-            int Marks = int.MinValue;
+
+            Console.WriteLine("Enter the class number (1 for Class1, 2 for Class2, etc.) to find the topper:");
+            enms.EnumClass(); // Enum display karne ke liye
+            SchoolClass selectedClass = (SchoolClass)int.Parse(Console.ReadLine());
+
+            int highestMarks = int.MinValue;
             StudentClass topper = null;
+
             foreach (var stud in students)
             {
-                int TotalMark = 0;
-                bool allSubject23 = true;
-                foreach (var sub in stud.Subjects)
+                if (stud.Class == selectedClass)
                 {
-                    if (sub.Value < 23)
+                    int totalMarks = 0;
+                    bool allSubjectsAbove23 = true;
+
+                    foreach (var sub in stud.Subjects)
                     {
-                        allSubject23 = false;
-                        break;
+                        if (sub.Value < 23)
+                        {
+                            allSubjectsAbove23 = false;
+                            break;
+                        }
+                        totalMarks += sub.Value;
                     }
-                    TotalMark += sub.Value;
-                }
-                if (allSubject23 && TotalMark > Marks)
-                {
-                    Marks = TotalMark;
-                    topper = stud;
+
+                    if (allSubjectsAbove23 && totalMarks > highestMarks)
+                    {
+                        highestMarks = totalMarks;
+                        topper = stud;
+                    }
                 }
             }
+
             if (topper != null)
             {
-                Console.WriteLine("Topper Details:");
-                Console.WriteLine(
-                    $"Name: {topper.FirstName} {topper.MiddleName} {topper.LastName}"
-                );
-                Console.WriteLine($"Class: {topper.Class}");
-                Console.WriteLine($"Total Marks (Only students with all subjects > 23): {Marks}");
-                foreach (var top in topper.Subjects)
+                Console.WriteLine($"Topper of Class {selectedClass}:");
+                Console.WriteLine($"Name: {topper.FirstName} {topper.MiddleName} {topper.LastName}");
+                Console.WriteLine($"Total Marks: {highestMarks}");
+                Console.WriteLine($"Subjects and Marks:");
+                foreach (var sub in topper.Subjects)
                 {
-                    Console.Write($" {top.Key}--{top.Value}");
+                    Console.WriteLine($"  {sub.Key}: {sub.Value}");
                 }
                 Console.WriteLine($"Hobbies: {string.Join(", ", topper.Hobbies)}");
                 Console.WriteLine($"Address: {topper.Address}");
             }
             else
             {
-                Console.WriteLine("No topper found.");
+                Console.WriteLine($"No topper found for Class {selectedClass}.");
             }
         }
+
         public void NthRollNo(List<StudentClass> students) 
         {
 
